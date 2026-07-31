@@ -102,14 +102,8 @@
         .glow-text {
             font-family: 'Dancing Script', cursive;
             font-size: clamp(2.2rem, 8vw, 3.5rem);
-            color: #ff6b9d;
-            text-shadow: 
-                0 0 10px #ff6b9d,
-                0 0 20px #ff6b9d,
-                0 0 40px #ff6b9d,
-                0 0 80px #ff1493,
-                0 0 120px #ff1493;
-            animation: pulseGlow 2s ease-in-out infinite alternate;
+            color: #ffd6e8;
+            text-shadow: 0 0 12px rgba(255, 107, 157, 0.5);
             margin-bottom: 0.3rem;
             word-break: break-word;
         }
@@ -137,13 +131,8 @@
         .sub-glow {
             font-family: 'Dancing Script', cursive;
             font-size: clamp(1.2rem, 4vw, 1.8rem);
-            color: #ffb3d9;
-            text-shadow: 
-                0 0 5px #ffb3d9,
-                0 0 10px #ffb3d9,
-                0 0 20px #ff69b4,
-                0 0 40px #ff69b4;
-            animation: pulseGlowSoft 3s ease-in-out infinite alternate;
+            color: #ffd6e8;
+            text-shadow: 0 0 8px rgba(255, 107, 157, 0.35);
             margin-bottom: 1.5rem;
         }
 
@@ -192,9 +181,8 @@
         .love-message {
             font-family: 'Dancing Script', cursive;
             font-size: clamp(1.1rem, 3.5vw, 1.6rem);
-            color: #e8c4e8;
+            color: #f0e0f5;
             line-height: 1.8;
-            text-shadow: 0 0 10px rgba(232, 196, 232, 0.3);
             margin-bottom: 0.5rem;
         }
 
@@ -229,12 +217,8 @@
         .question-glow {
             font-family: 'Dancing Script', cursive;
             font-size: clamp(1.5rem, 5vw, 2.2rem);
-            color: #ffb3d9;
-            text-shadow: 
-                0 0 10px #ffb3d9,
-                0 0 20px #ff69b4,
-                0 0 40px #ff69b4;
-            animation: pulseGlowSoft 2s ease-in-out infinite alternate;
+            color: #ffd6e8;
+            text-shadow: 0 0 8px rgba(255, 107, 157, 0.35);
             margin-bottom: 1.2rem;
         }
 
@@ -306,8 +290,7 @@
             margin-top: 1.2rem;
             font-family: 'Dancing Script', cursive;
             font-size: clamp(1.3rem, 4vw, 1.8rem);
-            color: #ffb3d9;
-            text-shadow: 0 0 20px rgba(255, 179, 217, 0.5);
+            color: #ffd6e8;
             min-height: 2.5rem;
         }
 
@@ -374,8 +357,7 @@
         .extra-message {
             font-family: 'Dancing Script', cursive;
             font-size: clamp(1rem, 3vw, 1.3rem);
-            color: #f0c0f0;
-            text-shadow: 0 0 10px rgba(240, 192, 240, 0.3);
+            color: #f0e0f5;
             animation: fadeInUp 0.5s ease forwards;
             opacity: 0;
         }
@@ -515,8 +497,8 @@
         .entry-content p {
             font-family: 'Dancing Script', cursive;
             font-size: clamp(1.3rem, 5vw, 1.8rem);
-            color: #ffb3d9;
-            text-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+            color: #ffd6e8;
+            text-shadow: 0 0 8px rgba(255, 107, 157, 0.35);
             margin-bottom: 2rem;
         }
 
@@ -881,37 +863,37 @@
             document.querySelector('.yes-btn').style.opacity = '0.6';
         }
 
-        // ===== No Button Runs Away (only within the menu) =====
+        // ===== No Button Moves Beside the Yes Button =====
         function moveNoButton() {
             const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.querySelector('.yes-btn');
             const container = document.querySelector('.question-section');
-            const btnGroup = document.querySelector('.button-group');
             
-            // Get container bounds
+            const yesRect = yesBtn.getBoundingClientRect();
             const containerRect = container.getBoundingClientRect();
             const btnWidth = noBtn.offsetWidth || 100;
             const btnHeight = noBtn.offsetHeight || 50;
+            const padding = 8;
+            const gap = 12;
             
-            // Calculate safe area within the question section only
-            const padding = 10;
-            const minX = containerRect.left + padding;
-            const minY = containerRect.top + padding;
-            const maxX = containerRect.right - btnWidth - padding;
-            const maxY = containerRect.bottom - btnHeight - padding;
+            // Pick a side: left or right of the Yes button
+            const side = Math.random() < 0.5 ? -1 : 1;
+            let newX = side === -1 ? yesRect.left - btnWidth - gap : yesRect.right + gap;
+            let newY = yesRect.top + (yesRect.height - btnHeight) / 2;
             
-            // Generate random position within the menu area
-            const randomX = Math.max(minX, Math.min(maxX, minX + Math.random() * (maxX - minX)));
-            const randomY = Math.max(minY, Math.min(maxY, minY + Math.random() * (maxY - minY)));
+            // Keep it inside the question menu
+            newX = Math.max(containerRect.left + padding, Math.min(containerRect.right - btnWidth - padding, newX));
+            newY = Math.max(containerRect.top + padding, Math.min(containerRect.bottom - btnHeight - padding, newY));
             
             // Apply position with smooth transition
             noBtn.style.position = 'fixed';
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
+            noBtn.style.left = newX + 'px';
+            noBtn.style.top = newY + 'px';
             noBtn.style.zIndex = '10';
             noBtn.style.transition = 'all 0.12s ease';
             
-            // Change the button text to something funny
-            const messages = ['No 💔', 'Nope 😅', 'Try again 😘', 'Catch me! 😜', 'Missed me! 💕', 'Not today! 💗', 'Too slow! 🏃‍♂️'];
+            // Change the button text to something simple
+            const messages = ['No 💔', 'Nope 😅', 'Try again 😘'];
             noBtn.textContent = messages[Math.floor(Math.random() * messages.length)];
         }
 
